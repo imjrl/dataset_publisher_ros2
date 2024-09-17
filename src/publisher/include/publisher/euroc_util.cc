@@ -34,6 +34,9 @@ euroc_sequence::euroc_sequence(const std::string& seq_dir_path) {
             ss << s;
             unsigned long long timestamp;
             ss >> timestamp;
+            std::string string_stamp=std::to_string(timestamp);
+            secs_.push_back(std::stoi(string_stamp.substr(2,8)));
+            nsecs_.push_back(std::stoul(string_stamp.substr(10,9)));
             timestamps_.push_back(timestamp / static_cast<double>(1E9));
             left_img_file_paths_.push_back(left_img_dir_path + std::to_string(timestamp) + ".png");
             right_img_file_paths_.push_back(right_img_dir_path + std::to_string(timestamp) + ".png");
@@ -48,8 +51,10 @@ std::vector<euroc_sequence::frame> euroc_sequence::get_frames() const {
     assert(timestamps_.size() == left_img_file_paths_.size());
     assert(timestamps_.size() == right_img_file_paths_.size());
     assert(left_img_file_paths_.size() == right_img_file_paths_.size());
+    assert(timestamps_.size() == secs_.size());
+    assert(timestamps_.size() == nsecs_.size());
     for (unsigned int i = 0; i < timestamps_.size(); ++i) {
-        frames.emplace_back(frame{left_img_file_paths_.at(i), right_img_file_paths_.at(i), timestamps_.at(i)});
+        frames.emplace_back(frame{left_img_file_paths_.at(i), right_img_file_paths_.at(i), timestamps_.at(i), secs_.at(i), nsecs_.at(i)});
     }
     return frames;
 }
